@@ -1,0 +1,11 @@
+Akun uji coba berhasil dibuat!
+Password untuk semua akun di atas adalah: password123
+
+Pemohon: pemohon@app.com
+Biro Umum: biro@app.com
+Pengadaan: pengadaan@app.com
+Vendor: vendor@app.com
+Perlengkapan: perlengkapan@app.com
+Menuju Halaman Login
+
+C:\xampp\php\php.exe -S localhost:8080
