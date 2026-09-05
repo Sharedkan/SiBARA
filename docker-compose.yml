@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sibara_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - sibara
+
+  nginx:
+    image: nginx:alpine
+    container_name: sibara_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - sibara
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: sibara_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-sibara}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_USER: ${DB_USERNAME:-sibara}
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - sibara
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: sibara_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "8080:80"
+    networks:
+      - sibara
+    depends_on:
+      - db
+
+networks:
+  sibara:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
